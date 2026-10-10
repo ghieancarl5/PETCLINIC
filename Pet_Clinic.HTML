@@ -1,0 +1,1036 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animal Clinic Management System</title>
+
+<style>
+:root {
+  --blue: #1688e8;
+  --navy: #174f83;
+  --bg: #f4f7fb;
+  --text: #263648;
+  --line: #e6edf4;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+
+/* LOGIN PAGE */
+#loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background: linear-gradient(135deg,#eee7da,#c6d5c4,#9aab9e);
+}
+.login-card {
+  width: 940px;
+  max-width: 100%;
+  min-height: 500px;
+  display: grid;
+  grid-template-columns: 38% 62%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 70px #192d3d30;
+}
+.login-form {
+  padding: 45px 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.login-form h1 { font-size: 25px; margin-bottom: 8px; }
+.login-form p { color: #8392a3; line-height: 1.6; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 15px;
+}
+.field label { font-size: 12px; font-weight: bold; }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #dce5ee;
+  border-radius: 5px;
+}
+.primary {
+  border: 0;
+  border-radius: 5px;
+  padding: 11px 16px;
+  color: white;
+  background: var(--blue);
+  font-weight: bold;
+}
+.primary:hover { background: #0875d0; }
+.login-image {
+  position: relative;
+  background: linear-gradient(135deg,#b7c8b6,#e5d5bf,#9aab9e);
+  display: flex;
+  align-items: flex-end;
+  padding: 30px;
+  overflow: hidden;
+}
+.login-image::before {
+  content: "🐕";
+  position: absolute;
+  font-size: 230px;
+  right: 20px;
+  bottom: 90px;
+}
+.login-caption {
+  z-index: 1;
+  background: #153f5ecc;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+.login-caption p { line-height: 1.5; }
+
+/* HEADER */
+#app { min-height: 100vh; }
+.topbar {
+  height: 64px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: bold;
+}
+.brand-icon {
+  background: var(--blue);
+  color: white;
+  padding: 9px;
+  border-radius: 8px;
+}
+.profile { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  background: #d9edff;
+  color: #176db1;
+  padding: 10px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* SIDEBAR */
+.layout { display: flex; min-height: calc(100vh - 64px); }
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--navy);
+  color: white;
+  padding: 18px 11px;
+  display: flex;
+  flex-direction: column;
+}
+.side-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #91b4d5;
+  padding: 15px 13px 8px;
+}
+.nav-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #d4e4f3;
+  text-align: left;
+  padding: 12px;
+  border-radius: 5px;
+  margin: 2px 0;
+  display: flex;
+  gap: 12px;
+}
+.nav-item:hover, .nav-item.active {
+  background: var(--blue);
+  color: white;
+}
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 15px 12px;
+  font-size: 11px;
+  color: #a9c5dd;
+}
+
+/* MAIN CONTENT */
+.main { flex: 1; min-width: 0; padding: 25px; }
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.page-head h1 { margin: 0 0 7px; font-size: 23px; }
+.sub { font-size: 12px; color: #8392a3; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 15px;
+  margin-bottom: 22px;
+}
+.stat-card, .panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  box-shadow: 0 4px 18px #123b5d0b;
+}
+.stat-card {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.stat-label { color: #7c8b9a; font-size: 12px; }
+.stat-value { font-size: 27px; font-weight: bold; margin-top: 9px; }
+.stat-icon {
+  background: #e9f5ff;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 22px;
+}
+.panel { padding: 19px; margin-bottom: 20px; min-width: 0; }
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 17px;
+}
+.panel-head h3 { margin: 0; font-size: 15px; }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+}
+.bar-chart {
+  height: 190px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 12px;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  background: repeating-linear-gradient(
+    to bottom, transparent 0, transparent 45px, #eef2f6 46px
+  );
+}
+.bar-wrap {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+.bar {
+  width: 65%;
+  max-width: 35px;
+  background: #39a5ef;
+  border-radius: 4px 4px 0 0;
+}
+.bar:nth-child(even) { background: #63c6c9; }
+.bar-label { font-size: 10px; color: #8392a3; }
+
+/* TABLES */
+.table-wrap { width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 650px; }
+th {
+  text-align: left;
+  font-size: 10px;
+  color: #8293a2;
+  background: #f8fafc;
+  padding: 13px;
+  border-bottom: 1px solid var(--line);
+}
+td {
+  padding: 13px;
+  border-bottom: 1px solid #edf1f5;
+  font-size: 12px;
+}
+tbody tr:hover { background: #f9fcff; }
+.outline, .small-btn {
+  background: white;
+  border: 1px solid #dce6ef;
+  color: #526c80;
+  padding: 9px 12px;
+  border-radius: 5px;
+}
+.small-btn { padding: 6px 8px; font-size: 11px; }
+.small-btn.red { color: #d74d59; }
+.status {
+  display: inline-block;
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: bold;
+  background: #fff4d9;
+  color: #a87509;
+}
+.status.Confirmed, .status.Completed {
+  background: #e0f7eb;
+  color: #208454;
+}
+.status.Cancelled {
+  background: #ffeaeb;
+  color: #c74652;
+}
+.searchbar {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 15px;
+}
+.searchbar input {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px;
+  border: 1px solid #dce6ef;
+  border-radius: 5px;
+}
+
+/* CALENDAR */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7,minmax(0,1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.cal-day-name {
+  padding: 12px 3px;
+  text-align: center;
+  background: #f8fafc;
+  font-size: 11px;
+  font-weight: bold;
+}
+.cal-cell {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  min-height: 85px;
+  padding: 7px;
+  background: white;
+  font-size: 11px;
+}
+.cal-cell.muted { background: #fbfcfd; color: #c0c8d0; }
+.cal-event {
+  background: #e0f3ff;
+  color: #1975b8;
+  padding: 5px;
+  margin-top: 4px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #102d4380;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.modal {
+  background: white;
+  border-radius: 9px;
+  width: min(560px,100%);
+  max-height: 90vh;
+  overflow: auto;
+}
+.modal-head, .modal-foot {
+  padding: 17px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+.modal-foot {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+  gap: 10px;
+}
+.modal-head h2 { margin: 0; font-size: 18px; }
+.modal-body { padding: 22px; }
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+.full { grid-column: 1/-1; }
+.close { border: 0; background: white; font-size: 23px; }
+.toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  background: #163f5f;
+  color: white;
+  padding: 13px 18px;
+  border-radius: 7px;
+  z-index: 50;
+}
+
+@media(max-width:1000px) {
+  .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:700px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; }
+  .main { padding: 15px; }
+  .login-card { grid-template-columns: 1fr; }
+  .login-image { min-height: 250px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .full { grid-column: auto; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ADMIN LOGIN -->
+<section id="loginPage">
+  <div class="login-card">
+    <form class="login-form" id="loginForm">
+      <div style="font-size:38px">🐾</div>
+      <h1>Admin Login</h1>
+      <p>Welcome to Green Bay Animal Clinic. Please sign in to continue.</p>
+
+      <div class="field">
+        <label>USERNAME</label>
+        <input id="username" placeholder="Enter username" required>
+      </div>
+
+      <div class="field">
+        <label>PASSWORD</label>
+        <input id="password" type="password" placeholder="Enter password" required>
+      </div>
+
+      <button class="primary" type="submit">Sign In</button>
+      <div class="sub" style="margin-top:15px">
+        Demo: admin / admin123
+      </div>
+    </form>
+
+    <div class="login-image">
+      <div class="login-caption">
+        <h2>Green Bay Animal Clinic</h2>
+        <p>Providing compassionate care and quality veterinary services for your beloved pets.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN APPLICATION -->
+<section id="app" class="hidden">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">🐾</span>
+      Green Bay Animal Clinic
+    </div>
+    <div class="profile">
+      <span>Welcome, Admin</span>
+      <span class="avatar">A</span>
+      <button class="outline" id="logout">Logout</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-label">MAIN MENU</div>
+      <button class="nav-item active" data-page="dashboard">▦ Dashboard</button>
+      <button class="nav-item" data-page="appointments">▣ Appointment</button>
+      <button class="nav-item" data-page="requests">◷ Appointment Request</button>
+      <button class="nav-item" data-page="medical">▤ Medical Appointment</button>
+
+      <div class="side-label">MANAGEMENT</div>
+      <button class="nav-item" data-page="pets">🐾 Pets</button>
+      <button class="nav-item" data-page="owners">♙ Pet Owners</button>
+      <button class="nav-item" data-page="medicines">✚ Medicines</button>
+      <button class="nav-item" data-page="inquiries">✉ Inquiries</button>
+      <button class="nav-item" data-page="settings">⚙ Settings</button>
+
+      <div class="sidebar-bottom">
+        Green Bay Animal Clinic<br>
+        Animal Clinic Management System
+      </div>
+    </aside>
+
+    <main class="main" id="mainContent"></main>
+  </div>
+</section>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+
+const today = new Date();
+const dateISO = offset => {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0,10);
+};
+const fmtDate = d => d
+  ? new Date(d + "T00:00:00").toLocaleDateString("en-PH",
+      {month:"short",day:"numeric",year:"numeric"})
+  : "";
+
+const seed = {
+  appointments: [
+    {id:1,owner:"Maria Santos",pet:"Bingo",species:"Dog",
+     service:"Vaccination",date:dateISO(0),time:"09:00",
+     vet:"Dr. Reyes",status:"Confirmed",notes:"Annual vaccine"},
+    {id:2,owner:"Juan Dela Cruz",pet:"Ming",species:"Cat",
+     service:"Small Check-up",date:dateISO(1),time:"10:30",
+     vet:"Dr. Garcia",status:"Pending",notes:"Regular check-up"},
+    {id:3,owner:"Ana Reyes",pet:"Max",species:"Dog",
+     service:"Deworming",date:dateISO(2),time:"13:00",
+     vet:"Dr. Santos",status:"Confirmed",notes:""}
+  ],
+  pets: [
+    {id:1,name:"Bingo",species:"Dog",breed:"Shih Tzu",
+     age:"3 years",owner:"Maria Santos",phone:"09171234567"},
+    {id:2,name:"Ming",species:"Cat",breed:"Persian",
+     age:"2 years",owner:"Juan Dela Cruz",phone:"09181234567"},
+    {id:3,name:"Max",species:"Dog",breed:"Aspen",
+     age:"1 year",owner:"Ana Reyes",phone:"09191234567"}
+  ],
+  owners: [
+    {id:1,name:"Maria Santos",phone:"09171234567",
+     email:"maria@example.com",address:"Pasig City"},
+    {id:2,name:"Juan Dela Cruz",phone:"09181234567",
+     email:"juan@example.com",address:"Quezon City"},
+    {id:3,name:"Ana Reyes",phone:"09191234567",
+     email:"ana@example.com",address:"Manila"}
+  ],
+  medicines: [
+    {id:1,name:"Amoxicillin",category:"Antibiotic",
+     stock:25,unit:"tablets",expiry:"2027-06-30"},
+    {id:2,name:"Anti-rabies Vaccine",category:"Vaccine",
+     stock:15,unit:"doses",expiry:"2027-02-15"},
+    {id:3,name:"Dewormer",category:"Dewormer",
+     stock:8,unit:"tablets",expiry:"2027-09-10"}
+  ],
+  inquiries: [
+    {id:1,name:"Maria Santos",contact:"09171234567",
+     subject:"Vaccination schedule",message:"When is the next vaccine?",
+     date:dateISO(0),status:"New"}
+  ]
+};
+
+let db;
+try {
+  db = JSON.parse(localStorage.getItem("greenBayData")) || seed;
+} catch(e) {
+  db = JSON.parse(JSON.stringify(seed));
+}
+let currentPage = "dashboard";
+let searchText = "";
+let calendarMonth = new Date(today.getFullYear(),today.getMonth(),1);
+
+function save() {
+  localStorage.setItem("greenBayData",JSON.stringify(db));
+}
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  })[c]);
+}
+function toast(message) {
+  $("#toastRoot").innerHTML =
+    `<div class="toast">${esc(message)}</div>`;
+  setTimeout(() => $("#toastRoot").innerHTML="",2500);
+}
+function statusTag(status) {
+  return `<span class="status ${esc(status)}">${esc(status)}</span>`;
+}
+function pageHead(title,subtitle,buttons="") {
+  return `<div class="page-head">
+    <div><h1>${title}</h1><div class="sub">${subtitle}</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${buttons}</div>
+  </div>`;
+}
+function table(headers,rows) {
+  return `<div class="table-wrap"><table>
+    <thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead>
+    <tbody>${rows || `<tr><td colspan="${headers.length}" style="text-align:center;padding:30px">No records found.</td></tr>`}</tbody>
+  </table></div>`;
+}
+function actionBtns(type,id) {
+  return `<button class="small-btn" onclick="editRecord('${type}',${id})">Edit</button>
+    <button class="small-btn red" onclick="deleteRecord('${type}',${id})">Delete</button>`;
+}
+
+/* DASHBOARD */
+function dashboardPage() {
+  const ap = db.appointments;
+  const pending = ap.filter(a=>a.status==="Pending").length;
+  const confirmed = ap.filter(a=>a.status==="Confirmed").length;
+
+  const cards = [
+    ["Total Appointments",ap.length,"▣"],
+    ["Registered Pets",db.pets.length,"🐾"],
+    ["Pet Owners",db.owners.length,"♙"],
+    ["Pending Requests",pending,"◷"]
+  ];
+
+  let html = pageHead("Dashboard",
+    "Welcome to Green Bay Animal Clinic Management System.",
+    `<button class="primary" onclick="openForm('appointments')">＋ New Appointment</button>`);
+
+  html += `<div class="stats">${cards.map(c=>`
+    <div class="stat-card">
+      <div><div class="stat-label">${c[0]}</div>
+      <div class="stat-value">${c[1]}</div></div>
+      <div class="stat-icon">${c[2]}</div>
+    </div>`).join("")}</div>`;
+
+  const heights = [38,62,48,83,57,72,43];
+  html += `<div class="dashboard-grid">
+    <section class="panel">
+      <div class="panel-head"><h3>Appointment Overview</h3>
+      <span class="sub">Weekly summary</span></div>
+      <div class="bar-chart">${heights.map((h,i)=>`
+        <div class="bar-wrap">
+          <div class="bar" style="height:${h}%"></div>
+          <span class="bar-label">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"][i]}</span>
+        </div>`).join("")}</div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h3>Appointment Summary</h3></div>
+      <p>Confirmed appointments <strong style="float:right">${confirmed}</strong></p>
+      <hr style="border:0;border-top:1px solid #eee">
+      <p>Pending requests <strong style="float:right">${pending}</strong></p>
+      <hr style="border:0;border-top:1px solid #eee">
+      <p>Completed visits <strong style="float:right">${ap.filter(a=>a.status==="Completed").length}</strong></p>
+      <button class="outline" onclick="navigate('requests')">View Requests →</button>
+    </section>
+  </div>`;
+
+  const upcoming = ap.filter(a=>a.status!=="Cancelled").slice(0,5);
+  html += `<section class="panel">
+    <div class="panel-head"><h3>Upcoming Appointments</h3>
+    <button class="outline" onclick="navigate('appointments')">View All</button></div>
+    ${table(["Pet Name","Owner","Service","Date","Time","Status"],
+      upcoming.map(a=>`<tr><td><strong>${esc(a.pet)}</strong></td>
+      <td>${esc(a.owner)}</td><td>${esc(a.service)}</td>
+      <td>${fmtDate(a.date)}</td><td>${esc(a.time)}</td>
+      <td>${statusTag(a.status)}</td></tr>`).join(""))}
+  </section>`;
+  return html;
+}
+
+/* APPOINTMENT CALENDAR */
+function appointmentPage() {
+  const year = calendarMonth.getFullYear();
+  const month = calendarMonth.getMonth();
+  const first = new Date(year,month,1).getDay();
+  const days = new Date(year,month+1,0).getDate();
+  const monthName = calendarMonth.toLocaleDateString("en-US",
+    {month:"long",year:"numeric"});
+
+  let cells = "";
+  for(let i=0;i<first;i++) {
+    cells += `<div class="cal-cell muted"></div>`;
+  }
+  for(let day=1;day<=days;day++) {
+    const date = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    const events = db.appointments.filter(a=>a.date===date);
+    cells += `<div class="cal-cell">
+      <div><strong>${day}</strong></div>
+      ${events.map(a=>`<div class="cal-event" title="${esc(a.pet)}">
+        ${esc(a.time)} ${esc(a.pet)}</div>`).join("")}
+    </div>`;
+  }
+
+  return pageHead("Appointment","Manage and schedule clinic appointments.",
+    `<button class="primary" onclick="openForm('appointments')">＋ Schedule Visit</button>`) +
+    `<section class="panel">
+      <div class="panel-head">
+        <button class="outline" onclick="changeMonth(-1)">← Previous</button>
+        <h3>${monthName}</h3>
+        <button class="outline" onclick="changeMonth(1)">Next →</button>
+      </div>
+      <div class="calendar">
+        ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<div class="cal-day-name">${d}</div>`).join("")}
+        ${cells}
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h3>All Appointments</h3></div>
+      ${appointmentTable(db.appointments)}
+    </section>`;
+}
+function changeMonth(n) {
+  calendarMonth.setMonth(calendarMonth.getMonth()+n);
+  render();
+}
+function appointmentTable(list) {
+  return table(["ID","Pet","Owner","Service","Date","Time","Veterinarian","Status","Actions"],
+    list.map(a=>`<tr>
+      <td>APT-${String(a.id).padStart(4,"0")}</td>
+      <td><strong>${esc(a.pet)}</strong><br>${esc(a.species)}</td>
+      <td>${esc(a.owner)}</td><td>${esc(a.service)}</td>
+      <td>${fmtDate(a.date)}</td><td>${esc(a.time)}</td>
+      <td>${esc(a.vet)}</td><td>${statusTag(a.status)}</td>
+      <td>${actionBtns("appointments",a.id)}</td>
+    </tr>`).join(""));
+}
+
+/* APPOINTMENT REQUESTS */
+function requestsPage() {
+  const list = db.appointments.filter(a=>a.status==="Pending");
+  return pageHead("Appointment Request",
+    "Review appointment requests from pet owners.") +
+    `<section class="panel">
+      <div class="panel-head"><h3>Pending Requests (${list.length})</h3></div>
+      ${table(["Pet","Owner","Service","Requested Date","Time","Status","Actions"],
+      list.map(a=>`<tr><td>${esc(a.pet)}</td><td>${esc(a.owner)}</td>
+        <td>${esc(a.service)}</td><td>${fmtDate(a.date)}</td>
+        <td>${esc(a.time)}</td><td>${statusTag(a.status)}</td>
+        <td><button class="small-btn" onclick="setStatus(${a.id},'Confirmed')">Approve</button>
+        <button class="small-btn red" onclick="setStatus(${a.id},'Cancelled')">Reject</button></td>
+      </tr>`).join(""))}
+    </section>`;
+}
+
+/* MEDICAL APPOINTMENTS */
+function medicalPage() {
+  return pageHead("Medical Appointment",
+    "Manage scheduled visits and veterinary services.",
+    `<button class="primary" onclick="openForm('appointments')">＋ Schedule Visit</button>`) +
+    `<section class="panel">
+      <div class="panel-head"><h3>Medical Visit Schedule</h3></div>
+      ${appointmentTable(db.appointments)}
+    </section>`;
+}
+
+/* RECORD TYPES */
+const configs = {
+  pets: {
+    title:"Pets", subtitle:"Manage registered animal patients.",
+    button:"Register Pet",
+    fields:[
+      ["name","Pet Name","text",true],
+      ["species","Species","select",true,["Dog","Cat"]],
+      ["breed","Breed","text",false],
+      ["age","Age","text",false],
+      ["owner","Pet Owner","text",true],
+      ["phone","Owner Phone","tel",false]
+    ],
+    headers:["Pet ID","Pet Name","Species","Breed","Age","Owner","Phone","Actions"],
+    row:r=>`<td>PET-${r.id}</td><td><strong>🐾 ${esc(r.name)}</strong></td>
+      <td>${esc(r.species)}</td><td>${esc(r.breed)}</td><td>${esc(r.age)}</td>
+      <td>${esc(r.owner)}</td><td>${esc(r.phone)}</td>
+      <td>${actionBtns("pets",r.id)}</td>`
+  },
+  owners: {
+    title:"Pet Owners", subtitle:"Manage client contact information.",
+    button:"Add Pet Owner",
+    fields:[
+      ["name","Full Name","text",true],
+      ["phone","Phone Number","tel",true],
+      ["email","Email Address","email",false],
+      ["address","Address","text",false]
+    ],
+    headers:["Owner ID","Full Name","Phone","Email","Address","Actions"],
+    row:r=>`<td>OWN-${r.id}</td><td><strong>${esc(r.name)}</strong></td>
+      <td>${esc(r.phone)}</td><td>${esc(r.email)}</td>
+      <td>${esc(r.address)}</td><td>${actionBtns("owners",r.id)}</td>`
+  },
+  medicines: {
+    title:"Medicines", subtitle:"Track clinic medicine stock and expiry dates.",
+    button:"Add Medicine",
+    fields:[
+      ["name","Medicine Name","text",true],
+      ["category","Category","select",true,["Antibiotic","Vaccine","Dewormer","Pain Relief","Vitamins","Other"]],
+      ["stock","Stock Quantity","number",true],
+      ["unit","Unit","text",true],
+      ["expiry","Expiry Date","date",true]
+    ],
+    headers:["ID","Medicine","Category","Stock","Expiry Date","Actions"],
+    row:r=>`<td>MED-${r.id}</td><td>${esc(r.name)}</td>
+      <td>${esc(r.category)}</td><td>${esc(r.stock)} ${esc(r.unit)}</td>
+      <td>${fmtDate(r.expiry)}</td><td>${actionBtns("medicines",r.id)}</td>`
+  },
+  inquiries: {
+    title:"Inquiries", subtitle:"View questions from pet owners.",
+    button:"Add Inquiry",
+    fields:[
+      ["name","Name","text",true],
+      ["contact","Contact Details","text",true],
+      ["subject","Subject","text",true],
+      ["message","Message","textarea",true],
+      ["date","Date Received","date",true],
+      ["status","Status","select",true,["New","Answered","Closed"]]
+    ],
+    headers:["ID","Sender","Contact","Subject / Message","Date","Status","Actions"],
+    row:r=>`<td>INQ-${r.id}</td><td>${esc(r.name)}</td>
+      <td>${esc(r.contact)}</td><td><strong>${esc(r.subject)}</strong><br>${esc(r.message)}</td>
+      <td>${fmtDate(r.date)}</td><td>${esc(r.status)}</td>
+      <td>${actionBtns("inquiries",r.id)}</td>`
+  }
+};
+
+function recordsPage(type) {
+  const c = configs[type];
+  const list = db[type].filter(r=>
+    JSON.stringify(r).toLowerCase().includes(searchText.toLowerCase()));
+
+  return pageHead(c.title,c.subtitle,
+    `<button class="outline" onclick="exportCSV('${type}')">Export CSV</button>
+     <button class="primary" onclick="openForm('${type}')">＋ ${c.button}</button>`) +
+    `<section class="panel">
+      <div class="searchbar">
+        <input placeholder="Search ${c.title.toLowerCase()}..."
+          value="${esc(searchText)}"
+          oninput="searchText=this.value;render()">
+        <button class="outline" onclick="searchText='';render()">Clear</button>
+      </div>
+      ${table(c.headers,list.map(r=>`<tr>${c.row(r)}</tr>`).join(""))}
+    </section>`;
+}
+
+/* SETTINGS */
+function settingsPage() {
+  return pageHead("Settings","Manage clinic information and preferences.") +
+    `<section class="panel" style="max-width:760px">
+      <h3>Clinic Information</h3>
+      <form id="settingsForm">
+        <div class="form-grid">
+          <div class="field"><label>CLINIC NAME</label>
+            <input name="clinic" value="Green Bay Animal Clinic" required></div>
+          <div class="field"><label>CONTACT NUMBER</label>
+            <input name="phone" value="(02) 8123-4567"></div>
+          <div class="field"><label>EMAIL ADDRESS</label>
+            <input name="email" type="email" value="greenbay@example.com"></div>
+          <div class="field"><label>OPENING HOURS</label>
+            <input name="hours" value="Mon-Sat, 8 AM-6 PM"></div>
+        </div>
+        <button class="primary">Save Settings</button>
+      </form>
+      <hr style="border:0;border-top:1px solid #eee;margin:25px 0">
+      <h3>Data Management</h3>
+      <p class="sub">Records are stored in this browser.</p>
+      <button class="outline" onclick="exportCSV('appointments')">Export Appointments</button>
+      <button class="outline" onclick="exportCSV('pets')">Export Pets</button>
+      <button class="outline" onclick="resetData()">Reset Demo Data</button>
+    </section>`;
+}
+
+/* NAVIGATION */
+function navigate(page) {
+  currentPage = page;
+  searchText = "";
+  document.querySelectorAll(".nav-item").forEach(b=>
+    b.classList.toggle("active",b.dataset.page===page));
+  render();
+}
+document.querySelectorAll(".nav-item").forEach(b=>
+  b.addEventListener("click",()=>navigate(b.dataset.page)));
+
+function render() {
+  const pages = {
+    dashboard:dashboardPage,
+    appointments:appointmentPage,
+    requests:requestsPage,
+    medical:medicalPage,
+    pets:()=>recordsPage("pets"),
+    owners:()=>recordsPage("owners"),
+    medicines:()=>recordsPage("medicines"),
+    inquiries:()=>recordsPage("inquiries"),
+    settings:settingsPage
+  };
+  $("#mainContent").innerHTML = (pages[currentPage]||dashboardPage)();
+}
+
+/* LOGIN / LOGOUT */
+$("#loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  if($("#username").value.trim()==="admin" &&
+     $("#password").value==="admin123") {
+    $("#loginPage").classList.add("hidden");
+    $("#app").classList.remove("hidden");
+    render();
+  } else {
+    alert("Incorrect login. Use admin / admin123.");
+  }
+});
+$("#logout").onclick=()=>{
+  $("#app").classList.add("hidden");
+  $("#loginPage").classList.remove("hidden");
+};
+
+/* ADD / EDIT FORMS */
+function openForm(type,id=null) {
+  const isAppt = type==="appointments";
+  const c = configs[type];
+  const record = id ? db[type].find(r=>r.id===id) : {};
+  const fields = isAppt ? [
+    ["owner","Pet Owner","text",true],
+    ["pet","Pet Name","text",true],
+    ["species","Species","select",true,["Dog","Cat"]],
+    ["service","Service","select",true,["General Check-up","Vaccination","Grooming","Dental Check","Surgery Consultation","Deworming","Other"]],
+    ["date","Appointment Date","date",true],
+    ["time","Appointment Time","time",true],
+    ["vet","Veterinarian","select",true,["Dr. Reyes","Dr. Garcia","Dr. Santos"]],
+    ["status","Status","select",true,["Pending","Confirmed","Completed","Cancelled"]],
+    ["notes","Notes","textarea",false]
+  ] : c.fields;
+
+  const formFields = fields.map(([key,label,kind,required,opts])=>{
+    let value = record[key] ?? (
+      key==="date" ? dateISO(0) :
+      key==="time" ? "09:00" :
+      key==="status" ? (type==="inquiries"?"New":"Pending") :
+      key==="species" ? "Dog" : ""
+    );
+    let input;
+    if(kind==="select") {
+      input=`<select name="${key}" ${required?"required":""}>
+        ${opts.map(o=>`<option value="${esc(o)}" ${value===o?"selected":""}>${esc(o)}</option>`).join("")}
+      </select>`;
+    } else if(kind==="textarea") {
+      input=`<textarea name="${key}" rows="3" ${required?"required":""}>${esc(value)}</textarea>`;
+    } else {
+      input=`<input name="${key}" type="${kind}" value="${esc(value)}"
+        ${required?"required":""} ${key==="stock"?'min="0"':""}>`;
+    }
+    return `<div class="field ${kind==="textarea"?"full":""}">
+      <label>${label.toUpperCase()}${required?" *":""}</label>${input}
+    </div>`;
+  }).join("");
+
+  $("#modalRoot").innerHTML=`
+    <div class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-head">
+          <h2>${id?"Edit":"Add"} ${isAppt?"Appointment":c.title}</h2>
+          <button class="close" onclick="closeModal()">×</button>
+        </div>
+        <form id="recordForm">
+          <div class="modal-body"><div class="form-grid">${formFields}</div></div>
+          <div class="modal-foot">
+            <button type="button" class="outline" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="primary">Save Record</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+
+  $("#recordForm").onsubmit=e=>{
+    e.preventDefault();
+    const obj=Object.fromEntries(new FormData(e.target).entries());
+
+    if(isAppt) {
+      obj.id=id||Date.now();
+    }
+
+    if(id) {
+      Object.assign(db[type].find(r=>r.id===id),obj);
+    } else {
+      obj.id=Math.max(0,...db[type].map(r=>Number(r.id)||0))+1;
+      db[type].push(obj);
+    }
+
+    if(type==="pets" && !db.owners.some(o=>o.name===obj.owner)) {
+      db.owners.push({
+        id:Math.max(0,...db.owners.map(o=>Number(o.id)||0))+1,
+        name:obj.owner,phone:obj.phone||"",email:"",address:""
+      });
+    }
+
+    save();
+    closeModal();
+    render();
+    toast("Record saved successfully!");
+  };
+}
+
+function closeModal() {
+  $("#modalRoot").innerHTML="";
+}
+function editRecord(type,id) {
+  openForm(type,id);
+}
+function deleteRecord(type,id) {
+  if(!confirm("Delete this record?")) return;
+  db[type]=db[type].filter(r=>r.id!==id);
+  save();
+  render();
+  toast("Record deleted.");
+}
+function setStatus(id,status) {
+  const a=db.appointments.find(a=>a.id===id);
+  if(a) {
+    a.status=status;
+    save();
+    render();
+    toast("Appointment "+status.toLowerCase());
+  }
+}
+
+/* CSV EXPORT */
+function exportCSV(type) {
+  const rows=db[type]||[];
+  if(!rows.length) {
+    toast("No records to export.");
+    return;
+  }
+  const keys=Object.keys(rows[0]);
+  const csv=[keys.join(","),...rows.map(r=>
+    keys.map(k=>'"'+String(r[k]??"").replace(/"/g,'""')+'"').join(",")
+  )].join("\r\n");
+
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=type+"-records.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function resetData() {
+  if(!confirm("Restore the original demo data?")) return;
+  db=JSON.parse(JSON.stringify(seed));
+  save();
+  render();
+  toast("Demo data restored.");
+}
+document.addEventListener("submit",e=>{
+  if(e.target.id==="settingsForm") {
+    e.preventDefault();
+    toast("Clinic settings saved.");
+  }
+});
+</script>
+</body>
+</html>
